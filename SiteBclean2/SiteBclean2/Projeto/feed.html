@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feed de Postagens - Limpeza de Praia</title>
+  <link rel="stylesheet" href="feed.css">
+</head>
+<body>
+
+  <header>
+    <img src="assets/img/logo.png" alt="Logo" class="logo">
+  </header>
+
+  <div class="button-container">
+    <button class="nav-btn">Página Inicial</button>
+    <button class="nav-btn">Eventos</button>
+    <button class="nav-btn">Configurações</button>
+    <button class="profile-btn">Perfil</button>
+  </div>
+
+  <div class="container">
+    <section class="new-post">
+      <h2>Adicionar Nova Postagem</h2>
+      <button class="add-image-btn" onclick="triggerImageUpload()">Adicionar Imagem</button>
+      <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload()" style="display: none;">
+      <div id="image-preview" class="image-preview"></div>
+      <input type="text" id="post-title" placeholder="Título da Postagem" />
+      <textarea id="post-description" placeholder="Descrição da Postagem"></textarea>
+      <button onclick="addNewPost()">Adicionar Postagem</button>
+    </section>
+    
+    <section class="feed" id="feed"></section>
+  </div>
+
+  <script>
+    let uploadedImage = null;
+
+    function triggerImageUpload() {
+      document.getElementById('file-input').click();
+    }
+
+    function handleImageUpload() {
+      const fileInput = document.getElementById('file-input');
+      const reader = new FileReader();
+      const previewContainer = document.getElementById('image-preview');
+
+      reader.onload = function(e) {
+        uploadedImage = e.target.result;
+
+        const image = document.createElement('img');
+        image.src = uploadedImage;
+
+        previewContainer.innerHTML = '';
+        previewContainer.appendChild(image);
+        previewContainer.style.display = 'flex';
+      };
+      
+      if (fileInput.files[0]) {
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    }
+
+    function addNewPost() {
+      const title = document.getElementById('post-title').value;
+      const description = document.getElementById('post-description').value;
+
+      if ((!uploadedImage && !title) || !description) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+      }
+
+      const feed = document.getElementById('feed');
+      
+      const newPost = document.createElement('article');
+      newPost.classList.add('post');
+
+      if (uploadedImage) {
+        const postImage = document.createElement('img');
+        postImage.src = uploadedImage;
+        newPost.appendChild(postImage);
+      }
+
+      const postContent = document.createElement('div');
+      postContent.classList.add('post-content');
+
+      const postTitle = document.createElement('h2');
+      postTitle.textContent = title;
+
+      const postDescription = document.createElement('p');
+      postDescription.textContent = description;
+
+      postContent.appendChild(postTitle);
+      postContent.appendChild(postDescription);
+      newPost.appendChild(postContent);
+
+      feed.prepend(newPost);
+
+      document.getElementById('post-title').value = '';
+      document.getElementById('post-description').value = '';
+      document.getElementById('file-input').value = '';
+      uploadedImage = null;
+      document.getElementById('image-preview').innerHTML = '';
+      document.getElementById('image-preview').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
